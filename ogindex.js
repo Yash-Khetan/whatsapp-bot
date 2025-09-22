@@ -99,7 +99,7 @@ async function sendWhatsAppMessage(to, message) {
 async function translateText(text, langCode) {
   // langCode is 'en'|'hi'|'mr'
   if (langCode === "en") return text;
-  const prompt = `Translate the following text to ${langCode}:\n\n${text}`;
+  const prompt = `Translate the following text to ${langCode}:\n\n${text} do not provide any extra commentary, just the translation. `;
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const result = await model.generateContent(prompt);
   return result.response.text();
@@ -143,6 +143,20 @@ app.post("/webhook", async (req, res) => {
     await sendWhatsAppMessage(from, welcome);
     return res.status(200).send("OK");
   }
+
+  // the get status command 
+  if (incomingMsg === 'status' || incomingMsg === '/status' || incomingMsg === 'my status') {
+  const city = userLocations.get(from) || 'Not subscribed';
+  const langCode = userPreferences.get(from)?.language || 'en';
+
+  const text = `📋 *Your Settings*\n\n` +
+               `🌍 City: ${city}\n` +
+               `🗣️ Language: ${langCode}\n` +
+               `🔔 Subscribed: ${subscribers.has(from) ? 'Yes' : 'No'}\n\n` +
+               `You can type "subscribe [city]" to change city or "1/2/3" to change language.`;
+
+  return await replyAndEnd(from, text, res);
+}
 
   // LANGUAGE SELECTION (priority)
   if (incomingMsg === "1" || incomingMsg === "2" || incomingMsg === "3") {
