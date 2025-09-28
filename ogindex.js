@@ -269,7 +269,7 @@ cron.schedule("0 */3 * * *", async () => {
 });
 
 // Daily activity reminders at 8 AM (server timezone)
-cron.schedule("0 8 * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Sending daily activity reminders...");
   for (const phone of subscribers) {
     await sendActivityReminder(phone);
