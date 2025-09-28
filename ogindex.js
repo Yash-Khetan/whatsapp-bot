@@ -254,7 +254,7 @@ Example: "subscribe Mumbai"`;
 // CRON JOBS
 
 // Weather alerts every 3 hours
-cron.schedule("* * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Checking weather alerts...");
   for (const [phone, city] of userLocations) {
     if (subscribers.has(phone)) {
